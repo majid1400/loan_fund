@@ -1,0 +1,11 @@
+.header {
+    padding: 64px;
+    direction: rtl;
+    text-align: right;
+}
+.header input {
+	margin-left: 31px;
+}
+.header label {
+	padding-left: 10px;
+}

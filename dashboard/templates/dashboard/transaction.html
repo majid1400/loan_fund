@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="mt-xxl-5">
+                <table class="table table-hover text-right" dir="rtl">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">شماره گروه</th>
+                        <th scope="col">نام و نام خانوادگی</th>
+                        <th scope="col">مقدار سرمایه</th>
+                        <th scope="col">وام</th>
+                        <th scope="col">نام پرداخت کننده</th>
+                        <th scope="col">نوع پرداخت</th>
+                        <th scope="col">ذخیره اطلاعات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {#                    {% for member in members %}#}
+                    {% for member_k, member_v in members.items %}
+                        {% if  member_v|length > 1 %}
+                             <form action="" method="post">
+                            {% for member in member_v %}
+
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ member.group_id }}</td>
+                                        <td>{{ member.name }} {{ member.family }}</td>
+                                        <td>{{ form.fund }}</td>
+                                        <td>{{ form.loan_p }}</td>
+                                        <td>{{ form.payer_name }}</td>
+                                        <td>{{ form.status_transaction }}</td>
+                                        {% if  forloop.counter == 1 %}
+                                            <td rowspan="{{ member_v|length }}">
+                                                <input class="btn btn-success"
+                                                       type="submit"
+                                                       value="ذخیره اطلاعات">
+                                            </td>
+                                        {% endif %}
+
+                                    </tr>
+                            {% endfor %}
+                            </form>
+                        {% else %}
+                            <form action="" method="post">
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ member_v.0.group_id }}</td>
+                                    <td>{{ member_v.0.name }} {{ member_v.0.family }}</td>
+                                    <td>{{ form.fund }}</td>
+                                    <td>{{ form.loan_p }}</td>
+                                    <td>{{ form.payer_name }}</td>
+                                    <td>{{ form.status_transaction }}</td>
+                                    <td>
+                                        <input class="btn btn-success"
+                                               type="submit"
+                                               value="ذخیره اطلاعات">
+                                    </td>
+
+                                </tr>
+                            </form>
+                        {% endif %}
+
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
