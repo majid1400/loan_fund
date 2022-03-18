@@ -57,17 +57,21 @@ class ListPaymentCard(models.Model):
 
 
 class Transaction(models.Model):
-    Fund = models.IntegerField(default=200000)
-    loan_p = models.IntegerField()
+    Fund = models.CharField(max_length=120, default=200000)
+    loan_p = models.CharField(max_length=120)
     payer_name = models.CharField(max_length=120)
     status_transaction = models.CharField(max_length=15,
                                           choices=STATUS_TRANSACTION,
                                           default="receive_money")
-    members = models.OneToOneField(Members, on_delete=models.CASCADE)
+    # members = models.OneToOneField(Members, on_delete=models.CASCADE)
+    members = models.ForeignKey('Members', on_delete=models.CASCADE)  # dashboard
     # TODO: open_account remove
     open_account = models.BooleanField(default=False)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse('transaction')
 
     def __str__(self):
         return f"{self.members.name} {self.members.family}"

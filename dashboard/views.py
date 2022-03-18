@@ -1,12 +1,9 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db import IntegrityError
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import generic
-
-from .forms import AccountCreateForm, TransactionForm
-from .models import Members, PeriodLoan
+from .forms import AccountCreateForm
+from .models import Members, Transaction
 
 
 # Create your views here.
@@ -57,25 +54,20 @@ class AccountCreateView(SuccessMessageMixin, generic.CreateView):
         return context
 
 
-def transaction(request):
+def transaction_create_view(request):
     members = Members.objects.order_by('group_id').all()
-    d = {}
-    for i in members:
-        if i.group_id in d:
-            d[i.group_id].append(i)
-        else:
-            d[i.group_id] = [i]
-    if request.method == 'POST':
-        form = TransactionForm(request.POST)
-        if form.is_valid():
-            fund = form.cleaned_data["fund"]
-            loan_p = form.cleaned_data["loan_p"]
-            payer_name = form.cleaned_data["payer_name"]
-            status_transaction = form.cleaned_data["status_transaction"]
-            messages.info(request,
-                          'داده شما با موفقیت ذخیره شد')
-            return render(request, 'dashboard/open-an-account.html',
-                          {'form': form, 'successful_submit': True})
 
-    form = TransactionForm()
-    return render(request, 'dashboard/transaction.html', {'form': form, 'members': d})
+    if request.method == 'POST':
+        pk = request.POST.get("pk")
+        fund = request.POST.get("fund")
+        loan_p = request.POST.get("loan_p")
+        payer_name = request.POST.get("payer_name")
+        member = Members.objects.get(id=int(pk))
+        transaction = Transaction.objects.create(
+            Fund=fund, loan_p=loan_p, payer_name=payer_name, members=member
+        )
+        transaction.save()
+        messages.info(request, 'داده شما با موفقیت ذخیره شد')
+        return render(request, 'dashboard/transaction.html', {'formset': members, 'successful_submit': True})
+
+    return render(request, 'dashboard/transaction.html', {'formset': members})
