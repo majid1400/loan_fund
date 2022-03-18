@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from .forms import AccountCreateForm
 from .models import Members, Transaction
@@ -55,8 +55,6 @@ class AccountCreateView(SuccessMessageMixin, generic.CreateView):
 
 
 def transaction_create_view(request):
-    members = Members.objects.order_by('group_id').all()
-
     if request.method == 'POST':
         pk = request.POST.get("pk")
         fund = request.POST.get("fund")
@@ -68,6 +66,33 @@ def transaction_create_view(request):
         )
         transaction.save()
         messages.info(request, 'داده شما با موفقیت ذخیره شد')
-        return render(request, 'dashboard/transaction.html', {'formset': members, 'successful_submit': True})
+        list_form = qs_trans_merge_members_transaction_create_view()
+        return render(request, 'dashboard/transaction.html', {'formset': list_form, 'successful_submit': True})
 
-    return render(request, 'dashboard/transaction.html', {'formset': members})
+    list_form = qs_trans_merge_members_transaction_create_view()
+    return render(request, 'dashboard/transaction.html', {'formset': list_form})
+
+
+def qs_trans_merge_members_transaction_create_view():
+    members = Members.objects.order_by('group_id').all()
+    qs_trans = Transaction.objects.order_by('-update').all()
+    unique_trans = []
+    for member in set(qs_trans.values_list('members', flat=True)):
+        unique_trans.append(
+            qs_trans.filter(members=member).values('Fund', 'loan_p', 'payer_name', 'members').first())
+
+    list_form = []
+    for member in members:
+        available = True
+        for c in range(len(unique_trans)):
+            if member.id == unique_trans[c]['members']:
+                list_form.append({'member': member, 'trans': unique_trans[c]})
+                available = False
+                break
+
+        if available:
+            list_form.append({'member': member, 'trans': ''})
+    return list_form
+
+# TODO unittest member.id transaction.html
+# TODO unittest unique_trans models Transaction
