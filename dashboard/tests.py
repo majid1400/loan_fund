@@ -62,6 +62,7 @@ class DashboardTest(TestCase):
         self.assertEqual(result[0]['member'], member)
         self.assertEqual(result[0]['trans']['Fund'], '300000')
         self.assertEqual(result[0]['trans']['loan_p'], '4000000')
+        self.assertEqual(result[0]['trans']['total_capital'], 500000)
 
     def test_create_update_models_setting(self):
         data = {'loan_ratio': '20', 'number_months_loan_repayment': '200', 'minimum_share': '1000'}

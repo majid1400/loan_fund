@@ -101,10 +101,15 @@ def is_valid_fund(fund):
 def qs_trans_merge_members_transaction_create_view():
     members = Members.objects.order_by('group_id').all()
     qs_trans = Transaction.objects.order_by('-update').all()
+    qs_total_capital = Transaction.objects.order_by('members').all()
     unique_trans = []
     for member in set(qs_trans.values_list('members', flat=True)):
         unique_trans.append(
             qs_trans.filter(members=member).values('Fund', 'loan_p', 'payer_name', 'members').first())
+
+    for i in unique_trans:
+        s = Transaction.objects.filter(members=i['members']).values_list('Fund', flat=True)
+        i['total_capital'] = sum(list([int(x) for x in s]))
 
     list_form = []
     for member in members:

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load humanize %}
+
 {% block title %}تراکنش{% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
                         <th scope="col">مقدار سرمایه</th>
                         <th scope="col">وام</th>
                         <th scope="col">نام پرداخت کننده</th>
-                        {#                        <th scope="col">نوع پرداخت</th>#}
+                        <th scope="col">سرمایه کل</th>
                         <th scope="col">ذخیره اطلاعات</th>
                     </tr>
                     </thead>
@@ -29,11 +29,13 @@
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ form.member.group_id }}</td>
                                 <td>{{ form.member }}</td>
-                                <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}"></td>
-                                <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p|intcomma }}"></td>
+                                <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund }}">
+                                </td>
+                                <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p }}">
+                                </td>
                                 <td><input type="text" name="payer_name" value="{{ form.trans.payer_name }}"></td>
 
-                                {#                                <td>{{ form.0.status_transaction }}</td>#}
+                                <td>{{ form.trans.total_capital }}</td>
                                 <td>
                                     <input type="hidden" name="pk" value="{{ form.member.id }}">
                                     <input class="btn btn-success" type="submit" value="ثبت">
