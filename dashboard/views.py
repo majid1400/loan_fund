@@ -71,22 +71,31 @@ class AccountCreateView(SuccessMessageMixin, generic.CreateView):
 
 
 def transaction_create_view(request):
+    list_form = qs_trans_merge_members_transaction_create_view()
     if request.method == 'POST':
         pk = request.POST.get("pk")
         fund = request.POST.get("fund")
         loan_p = request.POST.get("loan_p")
         payer_name = request.POST.get("payer_name")
         member = Members.objects.get(id=int(pk))
-        transaction = Transaction.objects.create(
-            Fund=fund, loan_p=loan_p, payer_name=payer_name, members=member
-        )
-        transaction.save()
-        messages.info(request, 'داده شما با موفقیت ذخیره شد')
-        list_form = qs_trans_merge_members_transaction_create_view()
+        if is_valid_fund(fund):
+            transaction = Transaction.objects.create(
+                Fund=fund, loan_p=loan_p, payer_name=payer_name, members=member
+            )
+            transaction.save()
+            messages.info(request, 'داده شما با موفقیت ذخیره شد')
+            list_form = qs_trans_merge_members_transaction_create_view()
+            return render(request, 'dashboard/transaction.html', {'formset': list_form, 'successful_submit': True})
+        messages.info(request, 'مقدار سرمایه کمتر از حد مجاز است')
         return render(request, 'dashboard/transaction.html', {'formset': list_form, 'successful_submit': True})
 
-    list_form = qs_trans_merge_members_transaction_create_view()
     return render(request, 'dashboard/transaction.html', {'formset': list_form})
+
+
+def is_valid_fund(fund):
+    setting = Setting.objects.all()
+    minimum_share = setting[0].minimum_share
+    return bool(int(fund) >= minimum_share)
 
 
 def qs_trans_merge_members_transaction_create_view():

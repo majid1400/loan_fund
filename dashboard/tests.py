@@ -15,6 +15,11 @@ class DashboardTest(TestCase):
             name="ali",
             family="alavi"
         )
+        self.setting = Setting.objects.create(
+            loan_ratio='20',
+            number_months_loan_repayment="200",
+            minimum_share="200000"
+        )
 
     def test_member_duplicate(self):
         form_data = {'group_id': 2, 'name': 'ali', 'family': 'alavi'}
@@ -25,21 +30,21 @@ class DashboardTest(TestCase):
     def test_create_models_transaction(self):
         member = Members.objects.get(id=int(self.member.id))
         transaction = Transaction.objects.create(
-            Fund='20000', loan_p='3000000', payer_name='ali', members=member
+            Fund='200000', loan_p='3000000', payer_name='ali', members=member
         )
-        self.assertEqual(transaction.Fund, '20000')
+        self.assertEqual(transaction.Fund, '200000')
         self.assertEqual(transaction.loan_p, '3000000')
         self.assertEqual(transaction.payer_name, 'ali')
         self.assertEqual(transaction.members, member)
 
     def test_create_view_transaction(self):
-        data = {'fund': '20000', 'loan_p': '3000000', 'payer_name': 'ali', 'pk': self.member.id}
-        response = self.client.post(reverse("transaction"), data=data, )
+        data = {'fund': '200000', 'loan_p': '3000000', 'payer_name': 'ali', 'pk': self.member.id}
+        response = self.client.post(reverse("transaction"), data=data)
 
         trans = Transaction.objects.last()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(trans.Fund, "20000")
+        self.assertEqual(trans.Fund, "200000")
         self.assertEqual(trans.loan_p, "3000000")
         self.assertEqual(trans.payer_name, "ali")
         self.assertEqual(trans.pk, self.member.id)
@@ -47,15 +52,15 @@ class DashboardTest(TestCase):
     def test_qs_trans_merge_members_transaction_create_view(self):
         member = Members.objects.get(id=int(self.member.id))
         Transaction.objects.create(
-            Fund='20000', loan_p='3000000', payer_name='ali', members=member
+            Fund='200000', loan_p='3000000', payer_name='ali', members=member
         )
         time.sleep(1)
         Transaction.objects.create(
-            Fund='30000', loan_p='4000000', payer_name='ali', members=member
+            Fund='300000', loan_p='4000000', payer_name='ali', members=member
         )
         result = qs_trans_merge_members_transaction_create_view()
         self.assertEqual(result[0]['member'], member)
-        self.assertEqual(result[0]['trans']['Fund'], '30000')
+        self.assertEqual(result[0]['trans']['Fund'], '300000')
         self.assertEqual(result[0]['trans']['loan_p'], '4000000')
 
     def test_create_update_models_setting(self):
