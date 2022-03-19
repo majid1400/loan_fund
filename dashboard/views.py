@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from .forms import AccountCreateForm
-from .models import Members, Transaction
+from .forms import AccountCreateForm, SettingCreateForm
+from .models import Members, Transaction, Setting
 
 
 # Create your views here.
@@ -42,6 +42,22 @@ from .models import Members, Transaction
 #     else:
 #         form = OpenAccountForm()
 #     return render(request, 'dashboard/open-an-account.html', {"form": form})
+
+class SettingCreateView(SuccessMessageMixin, generic.UpdateView):
+    form_class = SettingCreateForm
+    template_name = 'dashboard/setting.html'
+    model = Setting
+    success_message = "داده شما با موفقیت ذخیره شد"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["successful_submit"] = True
+        return context
+
+    def get_object(self, queryset=None):
+        obj, created = Setting.objects.get_or_create()
+        return obj
+
 
 class AccountCreateView(SuccessMessageMixin, generic.CreateView):
     form_class = AccountCreateForm
