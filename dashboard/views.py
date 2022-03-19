@@ -93,6 +93,3 @@ def qs_trans_merge_members_transaction_create_view():
         if available:
             list_form.append({'member': member, 'trans': ''})
     return list_form
-
-# TODO unittest member.id transaction.html
-# TODO unittest unique_trans models Transaction
