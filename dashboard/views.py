@@ -74,8 +74,8 @@ def transaction_create_view(request):
     list_form = qs_trans_merge_members_transaction_create_view()
     if request.method == 'POST':
         pk = request.POST.get("pk")
-        fund = request.POST.get("fund")
-        loan_p = request.POST.get("loan_p")
+        fund = request.POST.get("fund").replace(',','')
+        loan_p = request.POST.get("loan_p").replace(',','')
         payer_name = request.POST.get("payer_name")
         member = Members.objects.get(id=int(pk))
         if is_valid_fund(fund):

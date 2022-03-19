@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load humanize %}
 {% block title %}تراکنش{% endblock %}
 
 {% block content %}
@@ -29,13 +29,13 @@
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ form.member.group_id }}</td>
                                 <td>{{ form.member }}</td>
-                                <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund }}">
+                                <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}">
                                 </td>
-                                <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p }}">
+                                <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p|intcomma }}">
                                 </td>
-                                <td><input type="text" name="payer_name" value="{{ form.trans.payer_name }}"></td>
+                                <td><input type="text" name="payer_name" value="{{ form.trans.payer_name|intcomma }}"></td>
 
-                                <td>{{ form.trans.total_capital }}</td>
+                                <td>{{ form.trans.total_capital|intcomma }}</td>
                                 <td>
                                     <input type="hidden" name="pk" value="{{ form.member.id }}">
                                     <input class="btn btn-success" type="submit" value="ثبت">
