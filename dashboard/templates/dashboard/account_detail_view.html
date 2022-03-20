@@ -59,7 +59,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for item, increase in context.list_transaction %}
+                    {% for item, increase in context.users %}
                         <tr>
                             <th scope="row">{{ forloop.counter }}</th>
                             <td dir="ltr">{{ item.0|convert_date_persian }}</td>
@@ -70,7 +70,44 @@
 
                     </tbody>
                 </table>
+                {% if context.users.has_other_pages %}
+                    <ul class="pagination justify-content-center">
+                        {% if context.users.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" tabindex="-1"
+                                   href="?page={{ context.users.previous_page_number }}">قبلی</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">قبلی</a>
+                            </li>
+                        {% endif %}
+
+                        {% for i in context.users.paginator.page_range %}
+                            {% if context.users.number == i %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">{{ i }}
+                                        <span class="sr-only">(current)</span></a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if context.users.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ context.users.next_page_number }}">بعدی</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">بعدی</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                {% endif %}
             </div>
+
 
         </div>
         <div class="row">

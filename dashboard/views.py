@@ -85,6 +85,16 @@ def account_detail_view(request, pk):
     context['list_transaction'] = zip(list_trans, current_trans)
     context['total_capital'] = sum(list([int(x[1]) for x in list_trans]))
 
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(list(zip(list_trans, current_trans))[::-1], 5)
+    try:
+        context['users'] = paginator.page(page)
+    except PageNotAnInteger:
+        context['users'] = paginator.page(1)
+    except EmptyPage:
+        context['users'] = paginator.page(paginator.num_pages)
+
     return render(request, 'dashboard/account_detail_view.html', {'context': context, })
 
 
