@@ -15,6 +15,9 @@ class DashboardTest(TestCase):
             name="ali",
             family="alavi"
         )
+        self.transaction = Transaction.objects.create(
+            Fund='200000', loan_p='3000000', payer_name='ali', members=self.member
+        )
         self.setting = Setting.objects.create(
             loan_ratio='20',
             number_months_loan_repayment="200",
@@ -38,7 +41,7 @@ class DashboardTest(TestCase):
         self.assertEqual(transaction.members, member)
 
     def test_create_view_transaction(self):
-        data = {'fund': '200000', 'loan_p': '3000000', 'payer_name': 'ali', 'pk': self.member.id}
+        data = {'fund': '200000', 'loan_p': '3000000', 'payer_name': 'ali', 'pk': self.member.pk}
         response = self.client.post(reverse("transaction"), data=data)
 
         trans = Transaction.objects.last()
@@ -47,13 +50,11 @@ class DashboardTest(TestCase):
         self.assertEqual(trans.Fund, "200000")
         self.assertEqual(trans.loan_p, "3000000")
         self.assertEqual(trans.payer_name, "ali")
-        self.assertEqual(trans.pk, self.member.id)
+        self.assertEqual(1, self.member.pk)
+        self.assertEqual(trans.pk, 2)
 
     def test_qs_trans_merge_members_transaction_create_view(self):
         member = Members.objects.get(id=int(self.member.id))
-        Transaction.objects.create(
-            Fund='200000', loan_p='3000000', payer_name='ali', members=member
-        )
         time.sleep(1)
         Transaction.objects.create(
             Fund='300000', loan_p='4000000', payer_name='ali', members=member
@@ -76,3 +77,7 @@ class DashboardTest(TestCase):
         self.assertEqual(setting[0].loan_ratio, 2)
         self.assertEqual(setting[0].number_months_loan_repayment, 20)
         self.assertEqual(setting[0].minimum_share, 200000)
+
+    def test_account_detail_view(self):
+        response = self.client.get(reverse('account_detail', args=[self.member.pk]))
+        self.assertEqual(response.status_code, 200)
