@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% load humanize %}
+{% block title %}جزئیات{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row float-right">
+            <div class="header mt-xxl-5">
+                <table class="table table-hover text-right" dir="rtl">
+                    <tr>
+                        <th class="text-center" colspan="2">در یک نگاه</th>
+                    </tr>
+                    <tr>
+                        <th>نام و نام خانوادگی:</th>
+                        <td>{{ context.member }}</td>
+                    </tr>
+                    <tr>
+                        <th>وام دریافتی:</th>
+                        <td>555 77 854</td>
+                    </tr>
+                    <tr>
+                        <th>مبلغ هر قسط:</th>
+                        <td>555 77 855</td>
+                    </tr>
+                    <tr>
+                        <th>اقساط باقیمانده:</th>
+                        <td>555 77 855</td>
+                    </tr>
+                    <tr>
+                        <th>سرمایه کل:</th>
+                        <td>{{ context.total_capital|intcomma }}</td>
+                    </tr>
+                    <tr>
+                        <th>تاریخ دریافت قسط:</th>
+                        <td>555 77 855</td>
+                    </tr>
+                    <tr>
+                        <th>میانگین یک سال سرمایه:</th>
+                        <td>555 77 855</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="header mt-xxl-5">
+                <table class="table table-hover text-right" dir="rtl">
+                    <thead>
+                    <tr>
+                        <th class="text-center" colspan="4">دفترچه سرمایه</th>
+                    </tr>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>تاریخ ثبت پرداخت</th>
+                        <th>افزایش سرمایه</th>
+                        <th>سرمایه در صندوق</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item, increase in context.list_transaction %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td dir="ltr">{{ item.0|convert_date_persian }}</td>
+                            <td>{{ item.1|intcomma }}</td>
+                            <td>{{ increase|intcomma }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="header mt-xxl-5">
+                <table class="table table-hover text-right" dir="rtl">
+                    <thead>
+                    <tr>
+                        <th class="text-center" colspan="4">دفترچه اقساط</th>
+                    </tr>
+                    <tr>
+                        <th>ردیف:</th>
+                        <th>تاریخ ثبت پرداخت قسط:</th>
+                        <th>مبلغ قسط:</th>
+                        <th>باقیمانده قسط:</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>123</td>
+                        <td>123</td>
+                        <td>123</td>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
