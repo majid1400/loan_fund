@@ -129,7 +129,7 @@ def qs_trans_merge_members_transaction_create_view():
 
 
 def choice_loan_view(request):
-    context = {}
     if request.method == 'POST':
         context = get_choice_member_loan()
-    return render(request, 'dashboard/choice_loan.html', {"context": context})
+        return render(request, 'dashboard/choice_loan.html', {"context": context})
+    return render(request, 'dashboard/choice_loan.html')

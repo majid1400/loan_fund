@@ -9,7 +9,6 @@
     <div class="container">
         <div class="row float-right">
             <div class="header mt-xxl-5">
-
                 <table class="table table-bordered text-right" dir="ltr">
                     <tbody>
                     <tr>
@@ -54,6 +53,10 @@
 
                     </tbody>
                 </table>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">محاسبه وام جدید</button>
+                </form>
             </div>
         </div>
     </div>
