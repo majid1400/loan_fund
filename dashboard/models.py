@@ -85,9 +85,10 @@ class Cash(models.Model):
 
 
 class Setting(models.Model):
-    loan_ratio = models.PositiveSmallIntegerField(default=2)
+    loan_ratio = models.FloatField(default=2)
     number_months_loan_repayment = models.PositiveSmallIntegerField(default=20)
     minimum_share = models.PositiveSmallIntegerField(default=200000)
+    maximum_loan = models.PositiveSmallIntegerField()
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 

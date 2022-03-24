@@ -11,4 +11,4 @@ class AccountCreateForm(forms.ModelForm):
 class SettingCreateForm(forms.ModelForm):
     class Meta:
         model = Setting
-        fields = ['loan_ratio', 'number_months_loan_repayment', 'minimum_share']
+        fields = '__all__'

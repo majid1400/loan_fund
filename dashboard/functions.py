@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from dashboard.models import Transaction, Members, PeriodLoan
+from dashboard.models import Transaction, Members, PeriodLoan, Setting
 
 
 def get_unique_transaction_month():
@@ -46,8 +46,9 @@ def get_total_capital_member(pk):
 
 
 def check_loan(loan):
-    if loan >= 100000000:
-        return 100000000
+    maximum_loan = get_setting()[0].maximum_loan
+    if loan >= maximum_loan:
+        return maximum_loan
     return loan
 
 
@@ -60,7 +61,7 @@ def get_choice_member_loan():
     context = {}
     for index, period_loan_member in enumerate(PeriodLoan.objects.order_by('period_loan').all()):
         if period_loan_member.members in get_list_members_month():
-            loan_checker = int(get_total_capital_member(period_loan_member.members.id) * 2)
+            loan_checker = int(get_total_capital_member(period_loan_member.members.id) * get_setting()[0].loan_ratio)
             loan = check_loan(loan_checker)
             if sum_cash_desk_month >= loan:
                 sum_cash_desk_month -= int(loan)
@@ -86,3 +87,7 @@ def get_choice_member_loan():
                        'end': 1, 'number_loan': counter,
                        'sum_cash_desk_month': sum_cash_desk_month}
     return context
+
+
+def get_setting():
+    return Setting.objects.all()
