@@ -1,10 +1,10 @@
 import time
-
 from django.test import TestCase
 from django.urls import reverse
-
 from .forms import AccountCreateForm
-from .models import Members, Transaction, Setting
+from .functions import get_unique_transaction_month, get_sum_cash_desk_month, get_object_members, \
+    get_list_members_month, get_choice_member_loan
+from .models import Members, Transaction, Setting, PeriodLoan
 from .views import qs_trans_merge_members_transaction_create_view
 
 
@@ -23,6 +23,20 @@ class DashboardTest(TestCase):
             number_months_loan_repayment="200",
             minimum_share="200000"
         )
+
+    def test_create_account(self):
+        data = {'group_id': 2, 'name': 'maryam', 'family': 'alavi'}
+        response = self.client.post(reverse("account_create"), data=data)
+
+        member = Members.objects.last()
+        period = PeriodLoan.objects.last()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(member.group_id, 2)
+        self.assertEqual(member.name, 'maryam')
+        self.assertEqual(member.family, 'alavi')
+        self.assertEqual(period.members_id, member.pk)
+        self.assertEqual(period.period_loan, 1)
 
     def test_member_duplicate(self):
         form_data = {'group_id': 2, 'name': 'ali', 'family': 'alavi'}
@@ -81,3 +95,75 @@ class DashboardTest(TestCase):
     def test_account_detail_view(self):
         response = self.client.get(reverse('account_detail', args=[self.member.pk]))
         self.assertEqual(response.status_code, 200)
+
+    def test_choice_loan_view(self):
+        response = self.client.post(reverse("choice_loan"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_unique_transaction_month(self):
+        Transaction.objects.create(
+            Fund='500000', loan_p='5000000', payer_name='ali', members=self.member
+        )
+        result = get_unique_transaction_month()
+        self.assertEqual(result[0]['Fund'], '500000')
+        self.assertEqual(result[0]['loan_p'], '5000000')
+        self.assertEqual(result[0]['payer_name'], 'ali')
+        self.assertEqual(result[0]['members'], self.member.pk)
+
+    def test_get_sum_cash_desk_month(self):
+        Transaction.objects.create(
+            Fund='500000', loan_p='5000000', payer_name='ali', members=self.member
+        )
+        result = get_sum_cash_desk_month()
+        self.assertEqual(result, 5500000)
+
+        member = Members.objects.create(
+            group_id=2,
+            name="kamal",
+            family="alavi"
+        )
+        Transaction.objects.create(
+            Fund='500000', loan_p='5000000', payer_name='ali', members=member
+        )
+        result = get_sum_cash_desk_month()
+        self.assertEqual(result, 11000000)
+
+    def test_get_object_members(self):
+        result = get_object_members(self.member.pk)
+        self.assertEqual(result, self.member)
+
+    def test_get_list_members_month(self):
+        member = Members.objects.create(
+            group_id=2,
+            name="kamal",
+            family="alavi"
+        )
+        Transaction.objects.create(
+            Fund='500000', loan_p='5000000', payer_name='ali', members=member
+        )
+        result = get_list_members_month()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[1], member)
+
+    def test_get_choice_member_loan(self):
+        PeriodLoan.objects.create(period_loan=1, members_id=self.member.pk)
+        member = Members.objects.create(
+            group_id=2,
+            name="kamal",
+            family="alavi"
+        )
+        PeriodLoan.objects.create(period_loan=2, members_id=member.pk)
+        Transaction.objects.create(
+            Fund='200000', loan_p='0', payer_name='ali', members=member
+        )
+        result = get_choice_member_loan()
+        m1 = {'member': self.member, 'loan': 400000, 'sum_cash_desk_month': 3000000, 'wage_cash_desk': 800,
+              'wage_cashier': 2000, 'sum_wage': 2800, 'payment': 397200, 'before_loan': 0, 'final_payment': 397200}
+        m2 = {'member': member, 'loan': 400000, 'sum_cash_desk_month': 2600000, 'wage_cash_desk': 800,
+              'wage_cashier': 2000, 'sum_wage': 2800, 'payment': 397200, 'before_loan': 0, 'final_payment': 397200}
+        wage = {'sum_wage_member': 1600, 'sum_wage_cashier_member': 4000, 'end': 1, 'number_loan': 2,
+                'sum_cash_desk_month': 2600000}
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result['0'], m1)
+        self.assertEqual(result['1'], m2)
+        self.assertEqual(result['wage'], wage)

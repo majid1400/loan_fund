@@ -1,48 +1,13 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from .forms import AccountCreateForm, SettingCreateForm
-from .models import Members, Transaction, Setting
+from .functions import get_choice_member_loan
+from .models import Members, Transaction, Setting, PeriodLoan
 
-
-# Create your views here.
-# def home(request):
-#     if request.method == 'POST':
-#         form = OpenAccountForm(request.POST)
-#         if form.is_valid():
-#             group_id = form.cleaned_data["group_id"]
-#             name = form.cleaned_data["name"]
-#             family = form.cleaned_data["family"]
-#             data = Members(group_id=group_id, name=name, family=family)
-#
-#             obj = PeriodLoan.objects.order_by('period_loan').last()
-#             number = obj.period_loan + 1
-#
-#
-#             try:
-#                 data.save()
-#                 memid = Members.objects.order_by('id').last()
-#                 lastid = memid.id
-#                 period = PeriodLoan(period_loan=number, members_id=lastid)
-#                 period.save()
-#             except IntegrityError:
-#                 messages.error(request,
-#                                'داده تکراری')
-#                 return render(request, 'dashboard/open-an-account.html',
-#                               {'form': form, 'successful_submit': True})
-#             else:
-#
-#                 messages.info(request,
-#                               'داده شما با موفقیت ذخیره شد')
-#                 return render(request, 'dashboard/open-an-account.html',
-#                               {'form': form, 'successful_submit': True})
-#
-#
-#     else:
-#         form = OpenAccountForm()
-#     return render(request, 'dashboard/open-an-account.html', {"form": form})
 
 class SettingCreateView(SuccessMessageMixin, generic.UpdateView):
     form_class = SettingCreateForm
@@ -69,6 +34,16 @@ class AccountCreateView(SuccessMessageMixin, generic.CreateView):
         context = super().get_context_data(**kwargs)
         context["successful_submit"] = True
         return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        obj = PeriodLoan.objects.order_by('period_loan').last()
+        if obj is None:
+            PeriodLoan.objects.create(period_loan=1, members_id=self.object.id)
+            return HttpResponseRedirect(self.get_success_url())
+
+        PeriodLoan.objects.create(period_loan=obj.period_loan + 1, members_id=self.object.id)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 def account_detail_view(request, pk):
@@ -151,3 +126,10 @@ def qs_trans_merge_members_transaction_create_view():
         if available:
             list_form.append({'member': member, 'trans': ''})
     return list_form
+
+
+def choice_loan_view(request):
+    context = {}
+    if request.method == 'POST':
+        context = get_choice_member_loan()
+    return render(request, 'dashboard/choice_loan.html', {"context": context})

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load persian %}
+
+{% load humanize %}
+{% block title %}انتخاب وام{% endblock %}
+
+{% block content %}
+    {{ context.0.number_loan }}
+    <div class="container">
+        <div class="row float-right">
+            <div class="header mt-xxl-5">
+
+                <table class="table table-bordered text-right" dir="ltr">
+                    <tbody>
+                    <tr>
+                        <th>پرداختی اصلی</th>
+                        <th>وام قسط قبل</th>
+                        <th>پرداختی</th>
+                        <th>جمع کارمزد</th>
+                        <th>کارمزد صندوق دار</th>
+                        <th>کارمزد صندوق</th>
+                        <th>مانده</th>
+                        <th>مبلغ وام</th>
+                        <th colspan="2">مشخصات وام گیرنده</th>
+                    </tr>
+                    {% for v,i in context.items %}
+                        {% if v != 'wage' %}
+                            <tr>
+                                <td>{{ i.final_payment|intcomma }}</td>
+                                <td>{{ i.before_loan|intcomma }}</td>
+                                <td>{{ i.payment|intcomma }}</td>
+                                <td>{{ i.sum_wage|intcomma }}</td>
+                                <td>{{ i.wage_cashier|intcomma }}</td>
+                                <td>{{ i.wage_cash_desk|intcomma }}</td>
+                                <td>{{ i.sum_cash_desk_month|intcomma }}</td>
+                                <td>{{ i.loan|intcomma }}</td>
+                                <td>{{ i.member }}</td>
+                                {% if v == '0' %}
+                                    <th style="text-align: right;" rowspan="{{ context.wage.number_loan }}">وام
+                                        گیرندگان
+                                    </th>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if context.wage.end %}
+                        <tr>
+                            <td colspan="5">{{ context.wage.sum_wage_cashier_member|intcomma }}</td>
+                            <td>{{ context.wage.sum_wage_member|intcomma }}</td>
+                            <td colspan="2">{{ context.wage.sum_cash_desk_month|intcomma }}</td>
+                            <th colspan="2">مانده قبل به ماه بعد</th>
+                        </tr>
+                    {% endif %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
