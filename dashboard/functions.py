@@ -54,7 +54,6 @@ def check_loan(loan):
 
 def get_choice_member_loan():
     sum_cash_desk_month = get_sum_cash_desk_month()
-    # sum_cash_desk_month = 6000000
     sum_wage_member = 0
     sum_wage_cashier_member = 0
     counter = 0
@@ -85,7 +84,8 @@ def get_choice_member_loan():
     context['wage'] = {'sum_wage_member': sum_wage_member,
                        'sum_wage_cashier_member': sum_wage_cashier_member,
                        'end': 1, 'number_loan': counter,
-                       'sum_cash_desk_month': sum_cash_desk_month}
+                       'sum_cash_desk_month': sum_cash_desk_month,
+                       'get_sum_cash_desk_month': get_sum_cash_desk_month()}
     return context
 
 
