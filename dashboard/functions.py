@@ -114,6 +114,8 @@ def get_choice_member_loan_manual(*args):
                                    'wage_cash_desk': wage_cash_desk, 'wage_cashier': wage_cashier,
                                    'sum_wage': sum_wage, 'payment': payment, 'before_loan': before_loan,
                                    'final_payment': final_payment}
+        else:
+            break
     context['wage'] = {'sum_wage_member': sum_wage_member,
                        'sum_wage_cashier_member': sum_wage_cashier_member,
                        'end': 1, 'number_loan': counter,

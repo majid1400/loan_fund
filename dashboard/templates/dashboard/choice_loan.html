@@ -18,7 +18,6 @@
                     <table class="table table-bordered text-right" dir="ltr">
                         <tbody>
                         <tr>
-                            <th></th>
                             <th>پرداختی اصلی</th>
                             <th>وام قسط قبل</th>
                             <th>پرداختی</th>
@@ -32,9 +31,6 @@
                         {% for v,i in context.items %}
                             {% if v != 'wage' %}
                                 <tr>
-                                    <td bgcolor="#f0f8ff">
-                                        <button type="submit" class="btn btn-primary">ثبت</button>
-                                    </td>
                                     <td>{{ i.final_payment|intcomma }}</td>
                                     <td>{{ i.before_loan|intcomma }}</td>
                                     <td>{{ i.payment|intcomma }}</td>
@@ -68,6 +64,7 @@
                     </table>
                     <button type="submit" class="btn btn-primary">محاسبه وام جدید</button>
                     <button type="submit" class="btn btn-info" name="update" value="update">بروزرسانی</button>
+                    <button type="submit" class="btn btn-success" name="final" value="final">ثبت نهایی</button>
                 </form>
             </div>
         </div>
