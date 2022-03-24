@@ -45,6 +45,12 @@ def get_total_capital_member(pk):
     return fund
 
 
+def check_loan(loan):
+    if loan >= 100000000:
+        return 100000000
+    return loan
+
+
 def get_choice_member_loan():
     sum_cash_desk_month = get_sum_cash_desk_month()
     # sum_cash_desk_month = 6000000
@@ -54,7 +60,8 @@ def get_choice_member_loan():
     context = {}
     for index, period_loan_member in enumerate(PeriodLoan.objects.order_by('period_loan').all()):
         if period_loan_member.members in get_list_members_month():
-            loan = int(get_total_capital_member(period_loan_member.members.id) * 2)
+            loan_checker = int(get_total_capital_member(period_loan_member.members.id) * 2)
+            loan = check_loan(loan_checker)
             if sum_cash_desk_month >= loan:
                 sum_cash_desk_month -= int(loan)
                 wage_cash_desk = int(loan * 0.002)
