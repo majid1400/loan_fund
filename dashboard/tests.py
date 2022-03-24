@@ -19,9 +19,10 @@ class DashboardTest(TestCase):
             Fund='200000', loan_p='3000000', payer_name='ali', members=self.member
         )
         self.setting = Setting.objects.create(
-            loan_ratio='20',
+            loan_ratio='2',
             number_months_loan_repayment="200",
-            minimum_share="200000"
+            minimum_share="200000",
+            maximum_loan="100000000"
         )
 
     def test_create_account(self):
@@ -80,10 +81,12 @@ class DashboardTest(TestCase):
         self.assertEqual(result[0]['trans']['total_capital'], 500000)
 
     def test_create_update_models_setting(self):
-        data = {'loan_ratio': '20', 'number_months_loan_repayment': '200', 'minimum_share': '1000'}
+        data = {'loan_ratio': '20', 'number_months_loan_repayment': '200', 'minimum_share': '1000',
+                'maximum_loan': '100000'}
         self.client.post(reverse("setting"), data=data)
 
-        data2 = {'loan_ratio': '2', 'number_months_loan_repayment': '20', 'minimum_share': '200000'}
+        data2 = {'loan_ratio': '2', 'number_months_loan_repayment': '20', 'minimum_share': '200000',
+                 'maximum_loan': '100000000'}
         self.client.post(reverse("setting"), data=data2)
 
         setting = Setting.objects.all()
@@ -91,6 +94,7 @@ class DashboardTest(TestCase):
         self.assertEqual(setting[0].loan_ratio, 2)
         self.assertEqual(setting[0].number_months_loan_repayment, 20)
         self.assertEqual(setting[0].minimum_share, 200000)
+        self.assertEqual(setting[0].maximum_loan, 100000000)
 
     def test_account_detail_view(self):
         response = self.client.get(reverse('account_detail', args=[self.member.pk]))
@@ -162,7 +166,7 @@ class DashboardTest(TestCase):
         m2 = {'member': member, 'loan': 400000, 'sum_cash_desk_month': 2600000, 'wage_cash_desk': 800,
               'wage_cashier': 2000, 'sum_wage': 2800, 'payment': 397200, 'before_loan': 0, 'final_payment': 397200}
         wage = {'sum_wage_member': 1600, 'sum_wage_cashier_member': 4000, 'end': 1, 'number_loan': 2,
-                'sum_cash_desk_month': 2600000}
+                'sum_cash_desk_month': 2600000, 'get_sum_cash_desk_month': 3400000}
         self.assertEqual(len(result), 3)
         self.assertEqual(result['0'], m1)
         self.assertEqual(result['1'], m2)

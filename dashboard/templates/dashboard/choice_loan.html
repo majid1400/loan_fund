@@ -8,61 +8,66 @@
     <div class="container">
         <div class="row float-right">
             <div class="header mt-xxl-5">
-            <div class="alert alert-primary" role="alert">
-                <span class="badge badge-primary" style="font-size: 14px;padding: 10px;">تجمیعی صندوق: {{ context.wage.get_sum_cash_desk_month|intcomma }}</span>
+                <div class="alert alert-primary" role="alert">
+                    <span class="badge badge-primary"
+                          style="font-size: 14px;padding: 10px;">تجمیعی صندوق: {{ context.wage.get_sum_cash_desk_month|intcomma }}</span>
 
-            </div>
-                <table class="table table-bordered text-right" dir="ltr">
-                    <tbody>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th>پرداختی اصلی</th>
-                        <th>وام قسط قبل</th>
-                        <th>پرداختی</th>
-                        <th>جمع کارمزد</th>
-                        <th>کارمزد صندوق دار</th>
-                        <th>کارمزد صندوق</th>
-                        <th>مانده</th>
-                        <th>مبلغ وام</th>
-                        <th colspan="2">مشخصات وام گیرنده</th>
-                    </tr>
-                    {% for v,i in context.items %}
-                        {% if v != 'wage' %}
-                            <tr>
-                            <td bgcolor="#f0f8ff"><button type="submit" class="btn btn-primary">ثبت وام</button></td>
-                            <td bgcolor="#f0f8ff"><button type="submit" class="btn btn-primary">محاسبه جدید</button></td>
-                                <td>{{ i.final_payment|intcomma }}</td>
-                                <td>{{ i.before_loan|intcomma }}</td>
-                                <td>{{ i.payment|intcomma }}</td>
-                                <td>{{ i.sum_wage|intcomma }}</td>
-                                <td>{{ i.wage_cashier|intcomma }}</td>
-                                <td>{{ i.wage_cash_desk|intcomma }}</td>
-                                <td>{{ i.sum_cash_desk_month|intcomma }}</td>
-                                <td><input style="margin-left: 0px; width: 120px;" type="text" name="loan" value="{{ i.loan|intcomma }}"></td>
-                                <td>{{ i.member }}</td>
-                                {% if v == '0' %}
-                                    <th style="text-align: center; writing-mode: vertical-rl;" rowspan="{{ context.wage.number_loan }}">وام
-                                        گیرندگان
-                                    </th>
-                                {% endif %}
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                    {% if context.wage.end %}
-                        <tr>
-                            <td colspan="5">{{ context.wage.sum_wage_cashier_member|intcomma }}</td>
-                            <td>{{ context.wage.sum_wage_member|intcomma }}</td>
-                            <td colspan="2">{{ context.wage.sum_cash_desk_month|intcomma }}</td>
-                            <th colspan="2">مانده قبل به ماه بعد</th>
-                        </tr>
-                    {% endif %}
-
-                    </tbody>
-                </table>
+                </div>
                 <form method="post">
                     {% csrf_token %}
+                    <table class="table table-bordered text-right" dir="ltr">
+                        <tbody>
+                        <tr>
+                            <th></th>
+                            <th>پرداختی اصلی</th>
+                            <th>وام قسط قبل</th>
+                            <th>پرداختی</th>
+                            <th>جمع کارمزد</th>
+                            <th>کارمزد صندوق دار</th>
+                            <th>کارمزد صندوق</th>
+                            <th>مانده</th>
+                            <th>مبلغ وام</th>
+                            <th colspan="2">مشخصات وام گیرنده</th>
+                        </tr>
+                        {% for v,i in context.items %}
+                            {% if v != 'wage' %}
+                                <tr>
+                                    <td bgcolor="#f0f8ff">
+                                        <button type="submit" class="btn btn-primary">ثبت</button>
+                                    </td>
+                                    <td>{{ i.final_payment|intcomma }}</td>
+                                    <td>{{ i.before_loan|intcomma }}</td>
+                                    <td>{{ i.payment|intcomma }}</td>
+                                    <td>{{ i.sum_wage|intcomma }}</td>
+                                    <td>{{ i.wage_cashier|intcomma }}</td>
+                                    <td>{{ i.wage_cash_desk|intcomma }}</td>
+                                    <td>{{ i.sum_cash_desk_month|intcomma }}</td>
+                                    <td><input style="margin-left: 0px; width: 120px;" type="text" name="loan"
+                                               value="{{ i.loan|intcomma }}"></td>
+                                    <input type="hidden" name="member" value="{{ i.member.pk }}">
+                                    <td>{{ i.member }}</td>
+                                    {% if v == '0' %}
+                                        <th style="text-align: center; writing-mode: vertical-rl;"
+                                            rowspan="{{ context.wage.number_loan }}">وام
+                                            گیرندگان
+                                        </th>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% if context.wage.end %}
+                            <tr>
+                                <td colspan="5">{{ context.wage.sum_wage_cashier_member|intcomma }}</td>
+                                <td>{{ context.wage.sum_wage_member|intcomma }}</td>
+                                <td colspan="2">{{ context.wage.sum_cash_desk_month|intcomma }}</td>
+                                <th colspan="2">مانده قبل به ماه بعد</th>
+                            </tr>
+                        {% endif %}
+
+                        </tbody>
+                    </table>
                     <button type="submit" class="btn btn-primary">محاسبه وام جدید</button>
+                    <button type="submit" class="btn btn-info" name="update" value="update">بروزرسانی</button>
                 </form>
             </div>
         </div>

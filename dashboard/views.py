@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from .forms import AccountCreateForm, SettingCreateForm
-from .functions import get_choice_member_loan
+from .functions import get_choice_member_loan, get_choice_member_loan_manual
 from .models import Members, Transaction, Setting, PeriodLoan
 
 
@@ -130,6 +130,12 @@ def qs_trans_merge_members_transaction_create_view():
 
 def choice_loan_view(request):
     if request.method == 'POST':
-        context = get_choice_member_loan()
-        return render(request, 'dashboard/choice_loan.html', {"context": context})
+        if request.POST.get('update'):
+            loan = request.POST.getlist('loan')
+            member = request.POST.getlist('member')
+            context = get_choice_member_loan_manual(list(zip(loan, member)))
+            return render(request, 'dashboard/choice_loan.html', {"context": context})
+        else:
+            context = get_choice_member_loan()
+            return render(request, 'dashboard/choice_loan.html', {"context": context})
     return render(request, 'dashboard/choice_loan.html')

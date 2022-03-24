@@ -89,5 +89,42 @@ def get_choice_member_loan():
     return context
 
 
+def get_choice_member_loan_manual(*args):
+    context = {}
+    sum_wage_member = 0
+    sum_wage_cashier_member = 0
+    counter = 0
+    sum_cash_desk_month = get_sum_cash_desk_month()
+    for index, value in enumerate(args[0]):
+        member_id = int(value[1])
+        loan = clear_number(value[0])
+        if sum_cash_desk_month >= loan:
+            sum_cash_desk_month -= int(loan)
+            wage_cash_desk = int(loan * 0.002)
+            wage_cashier = int(loan * 0.005)
+            sum_wage = wage_cash_desk + wage_cashier
+            payment = loan - sum_wage
+            before_loan = 0
+            final_payment = payment - before_loan
+            sum_wage_member += wage_cash_desk
+            sum_wage_cashier_member += wage_cashier
+            counter += 1
+            context[str(index)] = {'member': get_object_members(member_id), 'loan': loan,
+                                   'sum_cash_desk_month': sum_cash_desk_month,
+                                   'wage_cash_desk': wage_cash_desk, 'wage_cashier': wage_cashier,
+                                   'sum_wage': sum_wage, 'payment': payment, 'before_loan': before_loan,
+                                   'final_payment': final_payment}
+    context['wage'] = {'sum_wage_member': sum_wage_member,
+                       'sum_wage_cashier_member': sum_wage_cashier_member,
+                       'end': 1, 'number_loan': counter,
+                       'sum_cash_desk_month': sum_cash_desk_month,
+                       'get_sum_cash_desk_month': get_sum_cash_desk_month()}
+    return context
+
+
+def clear_number(number):
+    return int(number.replace(",", ""))
+
+
 def get_setting():
     return Setting.objects.all()
