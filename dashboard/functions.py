@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
-from dashboard.models import Transaction, Members, PeriodLoan, Setting
+from dashboard.models import Transaction, Members, PeriodLoan, Setting, Loan, Cash
 
 
 def get_unique_transaction_month():
@@ -59,6 +59,7 @@ def get_choice_member_loan():
     counter = 0
     context = {}
     for index, period_loan_member in enumerate(PeriodLoan.objects.order_by('period_loan').all()):
+        # TODO: check (if) is_receive_loan False and Installment loans zero
         if period_loan_member.members in get_list_members_month():
             loan_checker = int(get_total_capital_member(period_loan_member.members.id) * get_setting()[0].loan_ratio)
             loan = check_loan(loan_checker)
@@ -130,3 +131,51 @@ def clear_number(number):
 
 def get_setting():
     return Setting.objects.all()
+
+
+def number_of_installment_loans(loan):
+    repayment = Setting.objects.values('number_months_loan_repayment').last()['number_months_loan_repayment']
+    return int(repayment) / loan
+
+
+def get_installment_loans(members):
+    try:
+        return Loan.objects.filter(members=members).values('installment_loans').last()['installment_loans']
+    except TypeError:
+        return 0
+
+
+def get_total_wage():
+    try:
+        return Cash.objects.values('total_wage').last()['total_wage']
+    except TypeError:
+        return 0
+
+
+def check_is_receive_loan_member(list_members):
+    for member in list(list_members):
+        if int(get_installment_loans(member)) != 0:
+            return False
+    return True
+
+
+def handler_submit_final_loan(loan, member, wage_before_month, money_before_month):
+    repayment = Setting.objects.values('number_months_loan_repayment').last()['number_months_loan_repayment']
+    for loan, member in list(zip(loan, member)):
+        PeriodLoan.objects.filter(members=member).update(is_receive_loan=True)
+        Loan.objects.update_or_create(date_receive_loan=datetime.now(),
+                                      receive_loan=clear_number(loan),
+                                      installment_loans=int(repayment),
+                                      members=get_object_members(member))
+
+    total = get_total_wage() + int(wage_before_month)
+    result = Cash.objects.update(money_before_month=money_before_month,
+                                 wage_before_month=wage_before_month,
+                                 total_wage=total)
+    if int(result) == 0:
+        Cash.objects.create(money_before_month=money_before_month,
+                            wage_before_month=wage_before_month,
+                            total_wage=total)
+
+# TODO: unittest get_choice_member_loan, number_of_installment_loans,
+#  get_total_wage, check_is_receive_loan_member, handler_submit_final_loan

@@ -26,21 +26,22 @@ class Members(models.Model):
 
 class PeriodLoan(models.Model):
     period_loan = models.PositiveSmallIntegerField(unique=True)
+    members = models.OneToOneField(Members, on_delete=models.CASCADE)
+    is_receive_loan = models.BooleanField(default=False)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
-    members = models.OneToOneField(Members, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.period_loan} {self.members}"
 
 
 class Loan(models.Model):
-    last_loan = models.BooleanField(default=False)
+    date_receive_loan = models.DateField()
     receive_loan = models.PositiveSmallIntegerField()
+    installment_loans = models.PositiveSmallIntegerField(default=0)
+    members = models.OneToOneField(Members, on_delete=models.CASCADE)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
-    members = models.OneToOneField(Members, on_delete=models.CASCADE)
-    period_loan = models.OneToOneField(PeriodLoan, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.receive_loan}"
@@ -78,8 +79,9 @@ class Transaction(models.Model):
 
 
 class Cash(models.Model):
-    money_next_month = models.PositiveSmallIntegerField()
-    wage = models.PositiveSmallIntegerField()
+    money_before_month = models.PositiveSmallIntegerField()
+    wage_before_month = models.PositiveSmallIntegerField()
+    total_wage = models.PositiveSmallIntegerField()
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
 

@@ -5,7 +5,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from .forms import AccountCreateForm, SettingCreateForm
-from .functions import get_choice_member_loan, get_choice_member_loan_manual
+from .functions import get_choice_member_loan, get_choice_member_loan_manual, check_is_receive_loan_member, \
+    handler_submit_final_loan
 from .models import Members, Transaction, Setting, PeriodLoan
 
 
@@ -130,11 +131,21 @@ def qs_trans_merge_members_transaction_create_view():
 
 def choice_loan_view(request):
     if request.method == 'POST':
+        loan = request.POST.getlist('loan')
+        member = request.POST.getlist('member')
+
         if request.POST.get('update'):
-            loan = request.POST.getlist('loan')
-            member = request.POST.getlist('member')
             context = get_choice_member_loan_manual(list(zip(loan, member)))
             return render(request, 'dashboard/choice_loan.html', {"context": context})
+        elif request.POST.get('final'):
+            if check_is_receive_loan_member(member):
+                wage_before_month = request.POST.getlist('wage')[0]
+                money_before_month = request.POST.getlist('wage')[1]
+                handler_submit_final_loan(loan, member, wage_before_month, money_before_month)
+                messages.info(request, 'داده شما با موفقیت ذخیره شد')
+                return render(request, 'dashboard/choice_loan.html', {'successful_submit': True})
+            messages.info(request, 'به یکی از اعضاء وام تعلق گرفته است، داده ای در دیتابیس ذخیره نشد')
+            return render(request, 'dashboard/choice_loan.html', {'successful_submit': True})
         else:
             context = get_choice_member_loan()
             return render(request, 'dashboard/choice_loan.html', {"context": context})

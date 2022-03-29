@@ -41,6 +41,7 @@
                                     <td><input style="margin-left: 0px; width: 120px;" type="text" name="loan"
                                                value="{{ i.loan|intcomma }}"></td>
                                     <input type="hidden" name="member" value="{{ i.member.pk }}">
+
                                     <td>{{ i.member }}</td>
                                     {% if v == '0' %}
                                         <th style="text-align: center; writing-mode: vertical-rl;"
@@ -57,6 +58,8 @@
                                 <td>{{ context.wage.sum_wage_member|intcomma }}</td>
                                 <td colspan="2">{{ context.wage.sum_cash_desk_month|intcomma }}</td>
                                 <th colspan="2">مانده قبل به ماه بعد</th>
+                            <input type="hidden" name="wage" value="{{ context.wage.sum_wage_member }}">
+                            <input type="hidden" name="wage" value="{{ context.wage.sum_cash_desk_month }}">
                             </tr>
                         {% endif %}
 
