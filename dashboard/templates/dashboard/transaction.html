@@ -52,7 +52,10 @@
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ form.member.group_id }}</td>
-                                <td>{{ form.member }}</td>
+                                <td><a class="text-decoration-none text-black"
+                                       href="{% url 'account_detail' form.member.id %}"
+                                       target="_blank"
+                                >{{ form.member }}</a></td>
                                 <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}">
                                 </td>
                                 <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p|intcomma }}">
