@@ -8,6 +8,8 @@ from .forms import AccountCreateForm, SettingCreateForm
 from .functions import get_choice_member_loan, get_choice_member_loan_manual, check_is_receive_loan_member, \
     handler_submit_final_loan
 from .models import Members, Transaction, Setting, PeriodLoan
+from datetime import datetime, timedelta
+from khayyam import JalaliDate, JalaliDatetime
 
 
 class SettingCreateView(SuccessMessageMixin, generic.UpdateView):
@@ -76,6 +78,9 @@ def account_detail_view(request, pk):
 
 def transaction_create_view(request):
     list_form = qs_trans_merge_members_transaction_create_view()
+    date_now = JalaliDatetime(datetime.now()).localdateformat()
+    session_cash = (JalaliDatetime.now() - timedelta(days=30)).strftime("%B %Y")
+
     if request.method == 'POST':
         pk = request.POST.get("pk")
         fund = request.POST.get("fund").replace(',', '')
@@ -93,7 +98,9 @@ def transaction_create_view(request):
         messages.info(request, 'مقدار سرمایه کمتر از حد مجاز است')
         return render(request, 'dashboard/transaction.html', {'formset': list_form, 'successful_submit': True})
 
-    return render(request, 'dashboard/transaction.html', {'formset': list_form})
+    return render(request, 'dashboard/transaction.html', {'formset': list_form,
+                                                          'session_cash': session_cash,
+                                                          'date_now': date_now})
 
 
 def is_valid_fund(fund):

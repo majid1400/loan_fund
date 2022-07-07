@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
 from dashboard.models import Transaction, Members, PeriodLoan, Setting, Loan, Cash
 
 
 def get_unique_transaction_month():
     date_end = datetime.now()
-    date_start = datetime.today().replace(day=1)
+    date_start = date_end - timedelta(days = 1)
     qs_trans = Transaction.objects.order_by('-id').filter(create__range=(date_start, date_end))
     unique_trans = []
     for member in set(qs_trans.values_list('members', flat=True)):
