@@ -58,7 +58,9 @@
                                 >{{ form.member }}</a></td>
                                 <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}">
                                 </td>
-                                <td dir="ltr"><input type="text" name="loan_p" value="{{ form.trans.loan_p|intcomma }}">
+                                <td dir="ltr">
+                                    <span  data-bs-toggle="tooltip" title="Default tooltip" class="badge text-bg-danger rounded-pill">3</span>
+                                    190,000
                                 </td>
                                 <td><input type="text" name="payer_name" value="{{ form.trans.payer_name|intcomma }}">
                                 </td>
