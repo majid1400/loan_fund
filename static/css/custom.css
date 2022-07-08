@@ -9,3 +9,9 @@
 .header label {
 	padding-left: 10px;
 }
+fieldset, legend {
+   all: revert;
+}
+.reset {
+    all: revert;
+}

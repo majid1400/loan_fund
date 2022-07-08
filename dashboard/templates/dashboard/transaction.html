@@ -59,13 +59,14 @@
                                 <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}">
                                 </td>
                                 <td dir="ltr">
-                                    <span  data-bs-toggle="tooltip" title="Default tooltip" class="badge text-bg-danger rounded-pill">3</span>
+                                    <span data-bs-toggle="tooltip" title="تعداد قسط باقیمانده از وام"
+                                          class="badge text-bg-danger rounded-pill">3</span>
                                     190,000
                                 </td>
                                 <td><input type="text" name="payer_name" value="{{ form.trans.payer_name|intcomma }}">
                                 </td>
-
-                                <td>{{ form.trans.total_capital|intcomma }}</td>
+ <td>{{ form.trans.total_capital|intcomma }}</td>
+{#                                <td>{{ form.trans.total_capital|intcomma }}</td>#}
                                 <td>
                                     <input type="hidden" name="pk" value="{{ form.member.id }}">
                                     <input class="btn btn-success" type="submit" value="ثبت">
@@ -83,5 +84,33 @@
         </div>
     </div>
 
+    <hr class="m-4">
 
+    <div class="container" dir="rtl">
+        <div class="row align-items-end">
+            <div class="col-2">
+                <b>مانده از {{ remaining_cash }}:</b>
+                <input class="col-12" type="text" value="435.000.000 ریال">
+
+            </div>
+            <div class="col-3">
+                <fieldset class="reset">
+                    <legend class="reset">سرمایه جمع شده</legend>
+                    435.000.000 ریال
+                </fieldset>
+            </div>
+            <div class="col-3">
+                <fieldset class="reset">
+                    <legend class="reset">سرمایه کل</legend>
+                    435.000.000 ریال
+                </fieldset>
+            </div>
+            <div class="col-2 ">
+                <button style="height: 53px" type="button" class="col-12 btn btn-primary">بروزرسانی</button>
+            </div>
+            <div class="col-2">
+                <button style="height: 53px" type="button" class="col-12 btn btn-secondary">بستن ماه</button>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -80,6 +80,7 @@ def transaction_create_view(request):
     list_form = qs_trans_merge_members_transaction_create_view()
     date_now = JalaliDatetime(datetime.now()).localdateformat()
     session_cash = (JalaliDatetime.now() - timedelta(days=30)).strftime("%B %Y")
+    remaining_cash = (JalaliDatetime.now() - timedelta(days=60)).strftime("%B %Y")
 
     if request.method == 'POST':
         pk = request.POST.get("pk")
@@ -100,7 +101,8 @@ def transaction_create_view(request):
 
     return render(request, 'dashboard/transaction.html', {'formset': list_form,
                                                           'session_cash': session_cash,
-                                                          'date_now': date_now})
+                                                          'date_now': date_now,
+                                                          'remaining_cash': remaining_cash})
 
 
 def is_valid_fund(fund):
