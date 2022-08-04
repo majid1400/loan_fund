@@ -7,7 +7,7 @@ from django.views import generic
 from .forms import AccountCreateForm, SettingCreateForm
 from .functions import get_choice_member_loan, get_choice_member_loan_manual, check_is_receive_loan_member, \
     handler_submit_final_loan
-from .models import Members, Transaction, Setting, PeriodLoan
+from .models import Members, Transaction, Setting, PeriodLoan, Cash
 from datetime import datetime, timedelta
 from khayyam import JalaliDate, JalaliDatetime
 

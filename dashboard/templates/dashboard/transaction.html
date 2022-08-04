@@ -39,8 +39,8 @@
                         <th scope="col">مقدار سرمایه</th>
                         <th scope="col">وام</th>
                         <th scope="col">نام پرداخت کننده</th>
-                        <th scope="col">سرمایه کل</th>
-                        <th scope="col">ذخیره اطلاعات</th>
+                        <th scope="col">جمع پرداختی</th>
+                        <th scope="col">جمع پرداختی گروه</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -52,25 +52,24 @@
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
                                 <td>{{ form.member.group_id }}</td>
+                                <input type="hidden" name="group_id{{ forloop.counter }}"
+                                       value={{ form.member.group_id }}>
                                 <td><a class="text-decoration-none text-black"
                                        href="{% url 'account_detail' form.member.id %}"
                                        target="_blank"
                                 >{{ form.member }}</a></td>
-                                <td dir="ltr"><input type="text" name="fund" value="{{ form.trans.Fund|intcomma }}">
+                                <td dir="ltr"><input type="text" name="fund[]" value="{{ form.trans.Fund }}">
                                 </td>
                                 <td dir="ltr">
                                     <span data-bs-toggle="tooltip" title="تعداد قسط باقیمانده از وام"
                                           class="badge text-bg-danger rounded-pill">3</span>
                                     190,000
+                                    <input type="hidden" name="load{{ forloop.counter }}" value="190000">
                                 </td>
-                                <td><input type="text" name="payer_name" value="{{ form.trans.payer_name|intcomma }}">
+                                <td><input type="text" name="payer_name" value="{{ form.trans.payer_name }}">
                                 </td>
- <td>{{ form.trans.total_capital|intcomma }}</td>
-{#                                <td>{{ form.trans.total_capital|intcomma }}</td>#}
-                                <td>
-                                    <input type="hidden" name="pk" value="{{ form.member.id }}">
-                                    <input class="btn btn-success" type="submit" value="ثبت">
-                                </td>
+                                <td class="total{{ forloop.counter }}"></td>
+                                <td class="totalk{{ form.member.group_id }}"></td>
                             </tr>
                         </form>
 
@@ -90,27 +89,74 @@
         <div class="row align-items-end">
             <div class="col-2">
                 <b>مانده از {{ remaining_cash }}:</b>
-                <input class="col-12" type="text" value="435.000.000 ریال">
+                <input class="col-12 az_month" name='az_month' type="text" value="435000000">
 
             </div>
             <div class="col-3">
                 <fieldset class="reset">
                     <legend class="reset">سرمایه جمع شده</legend>
-                    435.000.000 ریال
+                    <span class="kol"></span> ریال
                 </fieldset>
             </div>
             <div class="col-3">
                 <fieldset class="reset">
                     <legend class="reset">سرمایه کل</legend>
-                    435.000.000 ریال
+                    <span class="koll"></span> ریال
                 </fieldset>
             </div>
-            <div class="col-2 ">
-                <button style="height: 53px" type="button" class="col-12 btn btn-primary">بروزرسانی</button>
-            </div>
-            <div class="col-2">
-                <button style="height: 53px" type="button" class="col-12 btn btn-secondary">بستن ماه</button>
+            <div class="col-4">
+                <a class="text-decoration-none text-black"
+                                       href="{% url 'choice_loan' %}"
+                                       target="_blank"
+                                >
+                <button style="height: 53px" type="button" class="col-12 btn btn-success">بستن ماه</button>
+                </a>
             </div>
         </div>
     </div>
+
+    <script>
+        jQuery(document).ready(function ($) {
+            calculator()
+            $("input[name='fund[]']").keyup(function () {
+                calculator()
+            })
+            $("input[name='az_month']").keyup(function () {
+                calculator()
+            })
+
+        })
+
+        function calculator() {
+            var c = 0
+            var seen = []
+            var dicts = {}
+            var kol = 0
+            $("input[name='fund[]']").each(function () {
+                c += 1
+                var f = $(this).val()
+                var l = $("input[name='load" + c.toString() + "']").val()
+                var g = $("input[name='group_id" + c.toString() + "']").val()
+                var t = Number(l) + Number(f)
+
+                if (jQuery.inArray(g, seen) > -1) {
+                    dicts[g] += Number(t)
+                } else {
+                    seen.push(g)
+                    dicts[g] = Number(t)
+                }
+                $('.total' + c).html(t.toLocaleString())
+            });
+
+            for (var i in dicts) {
+                $(".totalk" + i).html(dicts[i].toLocaleString())
+                kol += dicts[i]
+            }
+            $('.kol').html(Number(kol).toLocaleString())
+            var az_month = $(".az_month").val()
+            $('.koll').html((Number(kol) + Number(az_month)).toLocaleString())
+
+
+        }
+    </script>
 {% endblock %}
