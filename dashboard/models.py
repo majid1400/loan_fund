@@ -80,6 +80,7 @@ class Transaction(models.Model):
 
 
 class Cash(models.Model):
+    submit_date = models.DateField()  # تاریخ ثبت اطلاعات
     money_before_month = models.PositiveSmallIntegerField(default=0)  # مانده قبل به ماه بعد
     fund_fee = models.PositiveSmallIntegerField(default=0)  # کارمزد صندوق
     cashier_fee = models.PositiveSmallIntegerField(default=0)  # کارمزد صندوق دار
