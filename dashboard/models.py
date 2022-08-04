@@ -36,9 +36,10 @@ class PeriodLoan(models.Model):
 
 
 class Loan(models.Model):
-    date_receive_loan = models.DateField()
-    receive_loan = models.PositiveSmallIntegerField()
-    installment_loans = models.PositiveSmallIntegerField(default=0)
+    date_receive_loan = models.DateField()  # تاریخ دریافت وام
+    receive_loan = models.PositiveSmallIntegerField(default=0)  # مبلغ وام
+    installment_loans = models.PositiveSmallIntegerField(default=0)  # مقدار قسط وام
+    remaining_installments = models.PositiveSmallIntegerField(default=0)  # اقساط باقیمانده
     members = models.OneToOneField(Members, on_delete=models.CASCADE)
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
@@ -79,9 +80,10 @@ class Transaction(models.Model):
 
 
 class Cash(models.Model):
-    money_before_month = models.PositiveSmallIntegerField()
-    wage_before_month = models.PositiveSmallIntegerField()
-    total_wage = models.PositiveSmallIntegerField()
+    money_before_month = models.PositiveSmallIntegerField(default=0)  # مانده قبل به ماه بعد
+    fund_fee = models.PositiveSmallIntegerField(default=0)  # کارمزد صندوق
+    cashier_fee = models.PositiveSmallIntegerField(default=0)  # کارمزد صندوق دار
+    total_wage = models.PositiveSmallIntegerField(default=0)  # جمع کارمزد صندوق
     create = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now=True)
 
